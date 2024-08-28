@@ -1,0 +1,83 @@
+# code: language=ansible
+---
+- name: Install thirdparties
+  hosts: keycloak-server
+  become: true
+  pre_tasks:
+    - name: Check Leap Distribution compatibility
+      ansible.builtin.fail:
+        msg: "This playbook only runs on LEAP 15 or above. Detected: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+      when: >
+        ansible_distribution != "openSUSE Leap" or
+        ansible_distribution_version is version('15.3', '<')
+
+  tasks:
+    - name: Install installation prerequisites
+      community.general.zypper:
+        name:
+          - gcc
+          - sudo
+          - git
+          - cronie # Certbot role cronjob renew
+        update_cache: true
+
+    - name: Start cronie service
+      ansible.builtin.service:
+        name: "cron"
+        state: started
+        enabled: true
+
+    - name: Install python prerequisites
+      community.general.zypper:
+        name:
+          - python3-setuptools
+          - python3-pip
+          - python3-pexpect
+          - python3-devel
+          - python3-rpm
+        state: present
+        update_cache: true
+
+- name: Check firewalld package on prometheus and trento-server hosts
+  hosts: keycloak-server
+  tasks:
+    - name: Collect package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Check if a specific package is installed
+      ansible.builtin.set_fact:
+        firewalld_installed: "{{ 'firewalld' in ansible_facts.packages }}"
+
+    # This task is required because immediate: true does not work with offline
+    # This should be fixed in newer ansible versions and could be removed in the future
+    - name: Check the status of firewalld
+      ansible.builtin.systemd:
+        name: firewalld.service
+      register: firewalld_status
+
+- name: Provision postgres
+  become: true
+  vars:
+    provision_postgres: "true"
+  hosts: postgres-hosts
+  roles:
+    - role: postgres
+      when: provision_postgres == 'true'
+      become: true
+
+- name: Configure keycloak components
+  hosts: keycloak-server
+  become: true
+  roles:
+    - role: geerlingguy.certbot
+      become: true
+      vars:
+        certbot_create_if_missing: "yes"
+        certbot_create_extra_args: ""
+        certbot_admin_email: trento-project@suse.com
+        certbot_certs:
+          - domains:
+              - "{{ keycloak_server_name }}"
+    - role: proxy
+      become: true

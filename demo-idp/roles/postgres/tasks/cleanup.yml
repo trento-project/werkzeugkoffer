@@ -1,0 +1,13 @@
+# code: language=ansible
+---
+- name: Remove keycloak database
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ keycloak_postgres_db }}"
+    state: absent
+
+- name: Remove keycloak database user
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    name: "{{ keycloak_postgres_user }}"
+    state: absent

@@ -1,0 +1,69 @@
+# code: language=ansible
+---
+- name: Install postgresql
+  when: install_postgres == 'true'
+  community.general.zypper:
+    name:
+      - postgresql15
+      - postgresql15-server
+      - postgresql15-contrib
+      - postgresql15-server-devel
+    state: present
+    update_cache: true
+
+- name: Install postgres python management deps
+  ansible.builtin.pip:
+    name:
+      - psycopg2-binary
+    state: present
+
+- name: Start postgresql service
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: "Configure postgres to listen on *"
+  become_user: postgres
+  community.postgresql.postgresql_set:
+    name: listen_addresses
+    value: "*"
+  notify: Restart postgres
+
+# this task is implemented with `lineinfile` instead of `pg_hba` module
+# as the second want does not provide any option to set the order of
+# the new entry, and this case, the new entry must be pretty much on top
+# of the host entries to apply properly the precedence of rules
+- name: Configure pg_hba to accept connection from keycloak
+  become_user: postgres
+  notify: Restart postgres
+  ansible.builtin.lineinfile:
+    path: /var/lib/pgsql/data/pg_hba.conf
+    regexp: "^host.*{{ keycloak_postgres_db }}"
+    insertafter: "^local.*all.*all.*peer"
+    line: "host\t{{ keycloak_postgres_db }}\t{{ keycloak_postgres_user }}\t0.0.0.0/0\tmd5"
+
+- name: Create postgres keycloak database
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ keycloak_postgres_db }}"
+    state: present
+
+- name: Create keycloak database user
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    db: "{{ keycloak_postgres_db }}"
+    name: "{{ keycloak_postgres_user }}"
+    password: "{{ keycloak_postgres_password }}"
+    comment: "Keycloak user provisioned by playbook"
+    state: present
+
+- name: Grant privilegies to the keycloak user for the keycloak database
+  become_user: postgres
+  community.postgresql.postgresql_privs:
+    db: "{{ keycloak_postgres_db }}"
+    objs: public
+    roles: "{{ keycloak_postgres_user }}"
+    privs: ALL
+    type: schema
+    state: present
