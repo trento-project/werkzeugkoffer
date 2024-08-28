@@ -1,0 +1,114 @@
+name: CI
+
+on:
+  push:
+    tags-ignore:
+      - "*"
+    branches:
+      - "main"
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  ansible-lint:
+    name: Playbook linting
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install galaxy deps
+        run: ansible-galaxy install -r demo-idp/requirements.yml
+
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint@v24.7.0
+
+  build-and-push-container-images-demo-idp:
+    name: Build and push container images for demo-idp playbook
+    runs-on: ubuntu-20.04
+    if: github.event_name == 'release' || (github.event_name == 'push' && github.ref_name == 'main')
+    needs: [ansible-lint]
+    permissions:
+      contents: read
+      packages: write
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/werkzeugkoffer-demo-idp
+      IMAGE_TAG: "${{ (github.event_name == 'release' && github.event.release.tag_name) || (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: docker/setup-buildx-action@v2
+      - name: Log in to the Container registry
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@507c2f2dc502c992ad446e3d7a5dfbe311567a96
+        with:
+          images: ${{ env.IMAGE_REPOSITORY }}
+      - name: Build and push container image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./demo-idp
+          file: "demo-idp/docker/Dockerfile"
+          push: true
+          tags: ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: "linux/amd64,linux/arm64"
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  create-artifact-demo-idp:
+    runs-on: ubuntu-20.04
+    needs: [ansible-lint]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Compress tarball
+        run: |
+          tar -zcf werkzeugkoffer-demo-idp.tgz demo-idp/roles/ demo-idp/playbook.yml demo-idp/playbook.cleanup.yml demo-idp/requirements.yml demo-idp/README.md
+      - uses: actions/upload-artifact@v3
+        with:
+          name: werkzeugkoffer-demo-idp
+          path: |
+            *.tgz
+
+  release-rolling-demo-idp:
+    runs-on: ubuntu-20.04
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    needs: [create-artifact-demo-idp]
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: werkzeugkoffer-demo-idp
+      - uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "rolling"
+          prerelease: true
+          title: "Cutting Edge"
+          files: |
+            werkzeugkoffer-demo-idp.tgz
+
+  release-demo-idp:
+    runs-on: ubuntu-20.04
+    if: github.event.release
+    needs: [create-artifact-demo-idp]
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: werkzeugkoffer-demo-idp
+      - uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: werkzeugkoffer-demo-idp.tgz
+          tag: ${{ github.ref }}
