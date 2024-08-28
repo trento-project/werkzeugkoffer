@@ -1,0 +1,12 @@
+# code: language=ansible
+---
+- name: Stop keycloak container
+  community.docker.docker_container:
+    name: "{{ keycloak_container_name }}"
+    state: absent
+    keep_volumes: false
+
+- name: Remove keycloak container image
+  community.docker.docker_image:
+    state: absent
+    name: "{{ keycloak_container_image }}"

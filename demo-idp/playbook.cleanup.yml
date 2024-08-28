@@ -1,0 +1,37 @@
+# code: language=ansible
+---
+- name: Check firewalld package
+  hosts: keycloak-server
+  tasks:
+    - name: Collect package facts
+      ansible.builtin.package_facts:
+        manager: auto
+    - name: Check if a specific package is installed
+      ansible.builtin.set_fact:
+        firewalld_installed: "{{ 'firewalld' in ansible_facts.packages }}"
+    - name: Check the status of firewalld
+      ansible.builtin.systemd:
+        name: firewalld.service
+      register: firewalld_status
+
+- name: Clean up keycloak
+  hosts: keycloak-server
+  become: true
+  tasks:
+    - name: Remove keycloak container
+      ansible.builtin.include_role:
+        name: keycloak
+        tasks_from: cleanup
+    - name: Proxy
+      ansible.builtin.include_role:
+        name: proxy
+        tasks_from: cleanup
+
+- name: Clean up postgres
+  hosts: postgres-hosts
+  become: true
+  tasks:
+    - name: Postgres
+      ansible.builtin.include_role:
+        name: postgres
+        tasks_from: cleanup

@@ -38,7 +38,7 @@
         state: present
         update_cache: true
 
-- name: Check firewalld package on prometheus and trento-server hosts
+- name: Check firewalld package
   hosts: keycloak-server
   tasks:
     - name: Collect package facts
