@@ -1,0 +1,43 @@
+# code: language=ansible
+---
+- name: Install docker
+  community.general.zypper:
+    name: docker
+    state: present
+    update_cache: true
+
+- name: Start docker service
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Install docker python management deps
+  ansible.builtin.pip:
+    name:
+      - docker
+    state: present
+
+- name: Create keycloak container
+  tags:
+    - keycloak-container
+  community.docker.docker_container:
+    name: "{{ keycloak_container_name }}"
+    state: started
+    restart_policy: "unless-stopped"
+    image: "{{ keycloak_container_image }}"
+    pull: true
+    command: ["start", "--proxy-headers", "xforwarded"]
+    etc_hosts:
+      host.docker.internal: "host-gateway"
+    ports:
+      - "{{ keycloak_listen_port }}:8080"
+    env:
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_DB: postgres
+      KC_DB_USERNAME: "{{ keycloak_postgres_user }}"
+      KC_DB_PASSWORD: "{{ keycloak_postgres_password }}"
+      KC_DB_URL: "jdbc:postgresql://host.docker.internal:5432/{{ keycloak_postgres_db }}"
+      KEYCLOAK_ADMIN: "{{ keycloak_admin_username }}"
+      KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"

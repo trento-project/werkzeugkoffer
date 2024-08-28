@@ -81,3 +81,5 @@
               - "{{ keycloak_server_name }}"
     - role: proxy
       become: true
+    - role: keycloak
+      become: true
