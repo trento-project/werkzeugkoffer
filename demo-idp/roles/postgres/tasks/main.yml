@@ -1,7 +1,7 @@
 # code: language=ansible
 ---
 - name: Install postgresql
-  when: install_postgres == 'true'
+  when: postgres_install == 'true'
   community.general.zypper:
     name:
       - postgresql15
@@ -25,6 +25,7 @@
 
 - name: "Configure postgres to listen on *"
   become_user: postgres
+  become: true
   community.postgresql.postgresql_set:
     name: listen_addresses
     value: "*"
@@ -36,34 +37,38 @@
 # of the host entries to apply properly the precedence of rules
 - name: Configure pg_hba to accept connection from keycloak
   become_user: postgres
+  become: true
   notify: Restart postgres
   ansible.builtin.lineinfile:
     path: /var/lib/pgsql/data/pg_hba.conf
-    regexp: "^host.*{{ keycloak_postgres_db }}"
+    regexp: "^host.*{{ postgres_keycloak_db }}"
     insertafter: "^local.*all.*all.*peer"
-    line: "host\t{{ keycloak_postgres_db }}\t{{ keycloak_postgres_user }}\t0.0.0.0/0\tmd5"
+    line: "host\t{{ postgres_keycloak_db }}\t{{ postgres_keycloak_user }}\t0.0.0.0/0\tmd5"
 
 - name: Create postgres keycloak database
   become_user: postgres
+  become: true
   community.postgresql.postgresql_db:
-    name: "{{ keycloak_postgres_db }}"
+    name: "{{ postgres_keycloak_db }}"
     state: present
 
 - name: Create keycloak database user
   become_user: postgres
+  become: true
   community.postgresql.postgresql_user:
-    db: "{{ keycloak_postgres_db }}"
-    name: "{{ keycloak_postgres_user }}"
+    db: "{{ postgres_keycloak_db }}"
+    name: "{{ postgres_keycloak_user }}"
     password: "{{ keycloak_postgres_password }}"
     comment: "Keycloak user provisioned by playbook"
     state: present
 
 - name: Grant privilegies to the keycloak user for the keycloak database
   become_user: postgres
+  become: true
   community.postgresql.postgresql_privs:
-    db: "{{ keycloak_postgres_db }}"
+    db: "{{ postgres_keycloak_db }}"
     objs: public
-    roles: "{{ keycloak_postgres_user }}"
+    roles: "{{ postgres_keycloak_user }}"
     privs: ALL
     type: schema
     state: present

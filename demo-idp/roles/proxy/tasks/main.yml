@@ -1,7 +1,7 @@
 # code: language=ansible
 ---
 - name: Install nginx
-  when: install_nginx == 'true'
+  when: proxy_install_nginx == 'true'
   community.general.zypper:
     name:
       - nginx
@@ -9,40 +9,40 @@
     update_cache: true
 
 - name: Override default nginx config
-  when: override_nginx_default_conf == 'true'
+  when: proxy_override_nginx_default_conf == 'true'
   ansible.builtin.template:
     src: "nginx-default.conf.j2"
-    dest: "{{ nginx_conf_base_dir }}/nginx.conf"
-    owner: "{{ nginx_user }}"
-    group: "{{ nginx_group }}"
+    dest: "{{ proxy_nginx_conf_base_dir }}/nginx.conf"
+    owner: "{{ proxy_nginx_user }}"
+    group: "{{ proxy_nginx_group }}"
     mode: "0644"
   vars:
-    conf_folder: "{{ nginx_conf_dir }}"
-    vhost_folder: "{{ nginx_vhost_dir }}"
+    conf_folder: "{{ proxy_nginx_conf_dir }}"
+    vhost_folder: "{{ proxy_nginx_vhost_dir }}"
   notify:
     - Restart nginx
 
 - name: Configure keycloak vhost
   ansible.builtin.template:
     src: "keycloak.conf.j2"
-    dest: "{{ nginx_conf_base_dir }}/{{ nginx_vhost_dir }}/{{ nginx_vhost_filename }}.conf"
-    owner: "{{ nginx_user }}"
-    group: "{{ nginx_group }}"
+    dest: "{{ proxy_nginx_conf_base_dir }}/{{ proxy_nginx_vhost_dir }}/{{ proxy_nginx_vhost_filename }}.conf"
+    owner: "{{ proxy_nginx_user }}"
+    group: "{{ proxy_nginx_group }}"
     mode: "0644"
   vars:
     server_name: "{{ keycloak_server_name }}"
     keycloak_port: "{{ keycloak_listen_port }}"
-    http_listen_port: "{{ nginx_vhost_http_listen_port }}"
-    https_listen_port: "{{ nginx_vhost_https_listen_port }}"
-    keycloak_upstream: "{{ keycloak_upstream_name }}"
-    ssl_certificate: "{{ ssl_certificate_path }}"
-    ssl_certificate_key: "{{ ssl_certificate_key_path }}"
+    http_listen_port: "{{ proxy_nginx_vhost_http_listen_port }}"
+    https_listen_port: "{{ proxy_nginx_vhost_https_listen_port }}"
+    keycloak_upstream: "{{ proxy_keycloak_upstream_name }}"
+    ssl_certificate: "{{ proxy_ssl_certificate_path }}"
+    ssl_certificate_key: "{{ proxy_ssl_certificate_key_path }}"
   notify:
     - Restart nginx
 
 - name: Start nginx service
   ansible.builtin.service:
-    name: "{{ nginx_service }}"
+    name: "{{ proxy_nginx_service }}"
     state: started
     enabled: true
 
@@ -53,8 +53,8 @@
     state: enabled
     offline: true
   loop:
-    - "{{ nginx_vhost_http_listen_port }}/tcp"
-    - "{{ nginx_vhost_https_listen_port }}/tcp"
+    - "{{ proxy_nginx_vhost_http_listen_port }}/tcp"
+    - "{{ proxy_nginx_vhost_https_listen_port }}/tcp"
   when: firewalld_installed
   notify:
     - Restart firewalld if running

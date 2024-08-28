@@ -2,7 +2,7 @@
 ---
 - name: Remove nginx vhost file
   ansible.builtin.file:
-    path: "{{ nginx_conf_base_dir }}/{{ nginx_vhost_dir }}/{{ nginx_vhost_filename }}.conf"
+    path: "{{ proxy_nginx_conf_base_dir }}/{{ proxy_nginx_vhost_dir }}/{{ proxy_nginx_vhost_filename }}.conf"
     state: absent
   notify:
     - Restart nginx
@@ -19,8 +19,8 @@
     state: disabled
     offline: true
   loop:
-    - "{{ nginx_vhost_http_listen_port }}/tcp"
-    - "{{ nginx_vhost_https_listen_port }}/tcp"
+    - "{{ proxy_nginx_vhost_http_listen_port }}/tcp"
+    - "{{ proxy_nginx_vhost_https_listen_port }}/tcp"
   when: firewalld_installed
   notify:
     - Restart firewalld if running

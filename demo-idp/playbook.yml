@@ -60,6 +60,7 @@
   become: true
   vars:
     provision_postgres: "true"
+    ansible_ssh_pipelining: true
   hosts: postgres-hosts
   roles:
     - role: postgres

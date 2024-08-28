@@ -2,12 +2,14 @@
 ---
 - name: Remove keycloak database
   become_user: postgres
+  become: true
   community.postgresql.postgresql_db:
-    name: "{{ keycloak_postgres_db }}"
+    name: "{{ postgres_keycloak_db }}"
     state: absent
 
 - name: Remove keycloak database user
   become_user: postgres
+  become: true
   community.postgresql.postgresql_user:
-    name: "{{ keycloak_postgres_user }}"
+    name: "{{ postgres_keycloak_user }}"
     state: absent
