@@ -3,5 +3,4 @@
 keycloak_admin_username: "trentokcadmin"
 keycloak_container_name: "keycloak"
 keycloak_container_image: "quay.io/keycloak/keycloak:25.0.2"
-keycloak_postgres_db: keycloak
-keycloak_postgres_user: keycloak
+keycloak_listen_port: 8080

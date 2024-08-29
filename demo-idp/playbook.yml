@@ -58,9 +58,6 @@
 
 - name: Provision postgres
   become: true
-  vars:
-    provision_postgres: "true"
-    ansible_ssh_pipelining: true
   hosts: postgres-hosts
   roles:
     - role: postgres
@@ -73,6 +70,7 @@
   roles:
     - role: geerlingguy.certbot
       become: true
+      when: enable_certbot_certificate_provisioning == 'true'
       vars:
         certbot_create_if_missing: "yes"
         certbot_create_extra_args: ""
@@ -83,4 +81,7 @@
     - role: proxy
       become: true
     - role: keycloak
+      vars:
+        keycloak_postgres_db: "{{ postgres_keycloak_db }}"
+        keycloak_postgres_user: "{{ postgres_keycloak_user }}"
       become: true

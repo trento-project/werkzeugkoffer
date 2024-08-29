@@ -1,0 +1,3 @@
+---
+provision_postgres: "true"
+ansible_ssh_pipelining: true

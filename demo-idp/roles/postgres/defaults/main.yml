@@ -1,3 +1,1 @@
-postgres_keycloak_db: keycloak
-postgres_keycloak_user: keycloak
 postgres_install: "true"
