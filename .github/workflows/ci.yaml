@@ -16,6 +16,10 @@ jobs:
     name: Playbook linting
     runs-on: ubuntu-20.04
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -39,6 +43,10 @@ jobs:
       IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/werkzeugkoffer-demo-idp
       IMAGE_TAG: "${{ (github.event_name == 'release' && github.event.release.tag_name) || (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -70,6 +78,10 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [ansible-lint]
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -87,6 +99,10 @@ jobs:
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
     needs: [create-artifact-demo-idp]
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
       - uses: actions/download-artifact@v3
         with:
           name: werkzeugkoffer-demo-idp
@@ -104,6 +120,10 @@ jobs:
     if: github.event.release
     needs: [create-artifact-demo-idp]
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
       - uses: actions/download-artifact@v3
         with:
           name: werkzeugkoffer-demo-idp
