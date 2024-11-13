@@ -13,6 +13,11 @@ import (
 	"github.com/trento-project/werkzeugoffer/egeria/internal/http"
 )
 
+// We exclude that variables from linting
+// because we explicitly use that
+// in the ldflags at build time
+var Version string //nolint
+
 func main() {
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -35,7 +40,7 @@ func main() {
 
 	githubClient := github.NewClient(nil)
 
-	apiLogger.Info("starting")
+	apiLogger.Info("starting", "version", Version)
 
 	registry := environment.NewRegistry(cli, githubClient)
 

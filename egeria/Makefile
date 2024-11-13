@@ -1,5 +1,6 @@
+VERSION ?= $(shell ./hack/get_version_from_git.sh)
 INSTALLATIONSOURCE ?= "Community"
-LDFLAGS := $(LDFLAGS) -X github.com/trento-project/werkzeugkoffer/egeria/version.InstallationSource="$(INSTALLATIONSOURCE)"
+LDFLAGS = -X main.Version="$(VERSION)"
 ARCHS ?= amd64 arm64
 DEBUG ?= 0
 
@@ -25,12 +26,15 @@ $(ARCHS):
 	GOOS=linux GOARCH=$@ $(GO_BUILD) -o build/$@/egeria ./cmd/egeria
 
 .PHONY: clean
-clean: clean-binary 
+clean: clean-binary clean-frontend
 
 .PHONY: clean-binary
 clean-binary:
 	go clean
 	rm -rf build
+
+.PHONY: clean-frontend
+	rm -rf egeria-fe/dist
 
 .PHONY: fmt
 fmt:
@@ -77,4 +81,4 @@ test-coverage:
 
 .PHONY: build-frontend
 build-frontend:
-	rm -rf internal/http/dist && cd egeria-fe && npm run build && mv dist ../../egeria/internal/http
+	rm -rf internal/http/dist && cd egeria-fe && npm i && npm run build && mv dist ../../egeria/internal/http

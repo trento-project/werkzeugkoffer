@@ -1,0 +1,12 @@
+[Unit]
+Description=Egeria PR environment service
+
+[Service]
+ExecStart=/usr/bin/egeria
+Type=simple
+User=root
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
