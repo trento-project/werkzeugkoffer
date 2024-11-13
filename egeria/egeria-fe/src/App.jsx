@@ -1,7 +1,16 @@
+import { useEffect, useState } from "react";
 import Bar from "./components/Bar";
 import EnvTable from "./components/EnvTable";
 
 function App() {
+  const [environments, setEnvironments] = useState([])
+
+  useEffect(() => {
+    fetch("/api/v1/environments")
+      .then((r) => r.json())
+      .then(({ data }) => setEnvironments(data || []))
+  }, [])
+
   return (
     <>
       <div className="min-h-full">
@@ -20,7 +29,7 @@ function App() {
               <div className="-m-1.5 overflow-x-auto">
                 <div className="p-1.5 min-w-full inline-block align-middle">
                   <div className="overflow-hidden">
-                    <EnvTable />
+                    <EnvTable environments={environments}/>
                   </div>
                 </div>
               </div>

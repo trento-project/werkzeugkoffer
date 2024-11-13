@@ -42,29 +42,7 @@ func main() {
 	v1ListEnvsHandler := http.NewV1ListEnvsHandler(registry)
 	router := http.InitRouter(v1ListEnvsHandler, apiLogger)
 
-	apiLogger.Info("started")
+	apiLogger.Info("started on port :4040")
 
 	stdHttp.ListenAndServe("localhost:4040", router)
-
-	// envs, err := registry.ListEnvs(ctx)
-	// if err != nil {
-	// 	fmt.Printf("ERROR %v", err)
-	// 	os.Exit(1)
-	// }
-
-	// for _, e := range envs {
-	// 	fmt.Printf(
-	// 		"ID:%s\nName: %s \nImage: %s\nStatus: %s\nCreated:%s\nCommit:%s\nAuthor:%s\nPr:%s\nSync Status:%s\nDangling?:%v\n---------\n\n",
-	// 		e.ID,
-	// 		e.Name,
-	// 		e.Image,
-	// 		e.Status,
-	// 		e.CreatedAt.Format(time.RFC3339),
-	// 		e.Revision.Commit,
-	// 		e.Revision.Author,
-	// 		e.Revision.PR,
-	// 		e.SyncStatus,
-	// 		e.Dangling,
-	// 	)
-	// }
 }

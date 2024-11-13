@@ -7,9 +7,17 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import trentoLogo from "../assets/trento.svg";
 
 const navigation = [
-  { name: "Trento Project", href: "#", current: false },
-  { name: "Web Repository", href: "#", current: false },
-  { name: "Agent Repository", href: "#", current: false },
+  { name: "Trento Project", href: "https://trento-project.io", current: false },
+  {
+    name: "Web Repository",
+    href: "https://github.com/trento-project/web",
+    current: false,
+  },
+  {
+    name: "Agent Repository",
+    href: "https://github.com/trento-project/agent",
+    current: false,
+  },
 ];
 
 function classNames(...classes) {
@@ -31,6 +39,7 @@ function Bar() {
                   <a
                     key={item.name}
                     href={item.href}
+                    target="_blank"
                     aria-current={item.current ? "page" : undefined}
                     className={classNames(
                       item.current

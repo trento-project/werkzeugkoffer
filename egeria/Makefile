@@ -11,10 +11,10 @@ else
 endif
 
 .PHONY: default
-default: clean mod-tidy fmt vet-check test build
+default: clean mod-tidy fmt vet-check test build-frontend build
 
 .PHONY: build
-build: egeria
+build: build-frontend egeria
 egeria:
 	$(GO_BUILD) -o egeria ./cmd/egeria
 
@@ -74,3 +74,7 @@ test-short:
 .PHONY: test-coverage
 test-coverage: 
 	go test -v -p 1 -race -covermode atomic -coverprofile=covprofile ./...
+
+.PHONY: build-frontend
+build-frontend:
+	rm -rf internal/http/dist && cd egeria-fe && npm run build && mv dist ../../egeria/internal/http
