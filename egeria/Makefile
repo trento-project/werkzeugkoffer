@@ -15,7 +15,7 @@ endif
 default: clean build-frontend mod-tidy fmt vet-check test build
 
 .PHONY: build
-build: build-frontend egeria
+build: clean build-frontend egeria
 egeria:
 	$(GO_BUILD) -o egeria ./cmd/egeria
 
