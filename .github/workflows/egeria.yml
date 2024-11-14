@@ -36,8 +36,8 @@ jobs:
         with:
           name: egeria-binaries
           path: |
-            build/egeria-amd64.tgz
-            build/egeria-arm64.tgz
+            egeria/build/egeria-amd64.tgz
+            egeria/build/egeria-arm64.tgz
 
   release-rolling:
     needs: [create-artifact-egeria]
