@@ -34,6 +34,7 @@ clean-binary:
 	rm -rf build
 
 .PHONY: clean-frontend
+clean-frontend:
 	rm -rf egeria-fe/dist
 
 .PHONY: fmt
