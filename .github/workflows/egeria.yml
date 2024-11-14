@@ -58,6 +58,7 @@ jobs:
 
   build-and-push-rolling-egeria-container:
     name: Build and push container images for egeria
+    needs: [create-artifact-egeria]
     runs-on: ubuntu-20.04
     permissions:
       contents: read
