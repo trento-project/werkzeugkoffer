@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: 20
       - name: build
-        run: make -j4 cross-compiled
+        run: make cross-compiled
       - name: compress
         run: |
           set -x

@@ -20,7 +20,7 @@ egeria:
 	$(GO_BUILD) -o egeria ./cmd/egeria
 
 .PHONY: cross-compiled $(ARCHS)
-cross-compiled: $(ARCHS)
+cross-compiled: clean build-frontend $(ARCHS)
 $(ARCHS):
 	@mkdir -p build/$@
 	GOOS=linux GOARCH=$@ $(GO_BUILD) -o build/$@/egeria ./cmd/egeria
