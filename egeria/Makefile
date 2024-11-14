@@ -81,4 +81,4 @@ test-coverage:
 
 .PHONY: build-frontend
 build-frontend:
-	rm -rf internal/http/dist && cd egeria-fe && npm i && npm run build && mv dist ../../egeria/internal/http
+	rm -rf internal/http/dist && cd egeria-fe && npm i && npm run build && mv dist ../internal/http
