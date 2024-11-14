@@ -12,7 +12,7 @@ else
 endif
 
 .PHONY: default
-default: clean mod-tidy fmt vet-check test build-frontend build
+default: clean build-frontend mod-tidy fmt vet-check test build
 
 .PHONY: build
 build: build-frontend egeria
