@@ -1,7 +1,11 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"log/slog"
+	"os"
+	"strconv"
 	"time"
 
 	stdHttp "net/http"
@@ -9,8 +13,10 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/go-chi/httplog/v2"
 	"github.com/google/go-github/v66/github"
+	"github.com/jferrl/go-githubauth"
 	"github.com/trento-project/werkzeugoffer/egeria/internal/environment"
 	"github.com/trento-project/werkzeugoffer/egeria/internal/http"
+	"golang.org/x/oauth2"
 )
 
 // We exclude that variables from linting
@@ -18,7 +24,21 @@ import (
 // in the ldflags at build time
 var Version string //nolint
 
+func mustHaveEnv(name string) string {
+	value := os.Getenv(name)
+	if value == "" {
+		panic(fmt.Sprintf("env %s not provided, aborting init", value))
+	}
+	return value
+}
+
 func main() {
+	appCtx := context.Background()
+
+	privateKey := []byte(mustHaveEnv("GITHUB_APP_PRIVATE_KEY"))
+	appID, _ := strconv.ParseInt(mustHaveEnv("GITHUB_APP_ID"), 10, 64)
+	installationID, _ := strconv.ParseInt(mustHaveEnv("GITHUB_INSTALLATION_ID"), 10, 64)
+
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		panic(err)
@@ -38,7 +58,15 @@ func main() {
 		QuietDownPeriod: 10 * time.Second,
 	})
 
-	githubClient := github.NewClient(nil)
+	appTokenSource, err := githubauth.NewApplicationTokenSource(appID, []byte(privateKey))
+	if err != nil {
+		fmt.Println("Error creating application token source:", err)
+		return
+	}
+
+	installationTokenSource := githubauth.NewInstallationTokenSource(installationID, appTokenSource)
+	githubHttpClient := oauth2.NewClient(appCtx, installationTokenSource)
+	githubClient := github.NewClient(githubHttpClient)
 
 	apiLogger.Info("starting", "version", Version)
 
