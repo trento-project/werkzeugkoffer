@@ -1,0 +1,38 @@
+name: Deploy Egeria Rolling version on PR env machine
+on:
+  workflow_dispatch:
+    
+
+jobs:
+  deploy-egeria:
+    name: Deploy egeria
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Run playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          requirements: requirements.yml
+          playbook: playbook.yml
+          directory: ./egeria/ansible
+          key: ${{ secrets.SSH_PR_MACHINE_KEY }}
+          inventory: |
+           all:
+             children:
+               egeria-server:
+                 hosts:
+                   pr-machine:
+                     ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
+                     ansible_user: "ec2-user"
+          options: |
+            --extra-vars "github_app_id='${{ secrets.APP_ID }}' \
+            github_installation_id='${{ secrets.INSTALLATION_ID }}' \
+            egeria_server_name='egeria.trento.suse.com' \
+            github_app_private_key='${{ secrets.PRIVATE_KEY }}'"
+        
