@@ -5,6 +5,7 @@ This repository contains the infrastructure code and development tools/scripts f
 ## What's inside the toolbox?
 
 - /demo-idp - Ansible playbook to deploy a production instance of keycloak, used by https://demoidp.trento.suse.com
+- /egeria - The trento PR environments dashboard, source code and ansible playbook
 
 
 
