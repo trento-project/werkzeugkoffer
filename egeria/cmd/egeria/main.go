@@ -83,5 +83,5 @@ func main() {
 
 	apiLogger.Info("started on port :4040")
 
-	stdHttp.ListenAndServe("localhost:4040", router)
+	stdHttp.ListenAndServe("0.0.0.0:4040", router)
 }
