@@ -58,10 +58,7 @@ func main() {
 		RequestHeaders:   true,
 		MessageFieldName: "message",
 		TimeFieldFormat:  time.RFC850,
-		Tags: map[string]string{
-			"env": "dev",
-		},
-		QuietDownPeriod: 10 * time.Second,
+		QuietDownPeriod:  10 * time.Second,
 	})
 
 	appTokenSource, err := githubauth.NewApplicationTokenSource(appID, []byte(privateKey))
