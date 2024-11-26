@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-chi/httplog/v2"
 	"github.com/go-chi/render"
 	"github.com/trento-project/werkzeugoffer/egeria/internal/environment"
 )
@@ -29,7 +30,9 @@ type ListEnvsResponse struct {
 func NewV1ListEnvsHandler(registry *environment.Registry) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		environments, err := registry.ListEnvs(r.Context())
+		logger := httplog.LogEntry(r.Context())
 		if err != nil {
+			logger.Error("error during environment fetching", "error", err)
 			render.Render(w, r, &ErrorResponse{
 				Temporary:  false,
 				Err:        err,

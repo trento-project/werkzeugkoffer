@@ -12,6 +12,12 @@ require (
 )
 
 require (
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/rs/zerolog v1.29.1 // indirect
+)
+
+require (
 	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/containerd/log v0.1.0 // indirect
@@ -19,6 +25,7 @@ require (
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
+	github.com/go-chi/httplog v0.3.2
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
