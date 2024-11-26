@@ -1,0 +1,18 @@
+---
+proxy_nginx_vhost_filename: "egeria"
+proxy_nginx_vhost_http_listen_port: "80"
+proxy_nginx_vhost_https_listen_port: "443"
+proxy_egeria_upstream_name: "egeria"
+proxy_ssl_certificate_key_path: "/etc/letsencrypt/live/{{ egeria_server_name }}/privkey.pem"
+proxy_ssl_certificate_path: "/etc/letsencrypt/live/{{ egeria_server_name }}/fullchain.pem"
+egeria_listen_port: "4040"
+egeria_image: "ghcr.io/trento-project/egeria:rolling"
+enable_certbot_certificate_provisioning: "true"
+force_pull_images: "true"
+recreate_egeria_container: "false"
+proxy_nginx_conf_base_dir: "/etc/nginx"
+proxy_nginx_vhost_dir: "vhosts.d"
+proxy_nginx_conf_dir: "conf.d"
+proxy_nginx_user: nginx
+proxy_nginx_group: nginx
+proxy_nginx_service: nginx

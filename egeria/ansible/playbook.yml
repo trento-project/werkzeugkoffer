@@ -1,0 +1,102 @@
+# code: language=ansible
+---
+- name: Install thirdparties
+  hosts: egeria-server
+  become: true
+  pre_tasks:
+    - name: Check Leap Distribution compatibility
+      ansible.builtin.fail:
+        msg: "This playbook only runs on LEAP 15 or above. Detected: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+      when: >
+        ansible_distribution != "openSUSE Leap" or
+        ansible_distribution_version is version('15.3', '<')
+
+  tasks:
+    - name: Install installation prerequisites
+      community.general.zypper:
+        name:
+          - gcc
+          - sudo
+          - git
+          - cronie # Certbot role cronjob renew
+        update_cache: true
+
+    - name: Start cronie service
+      ansible.builtin.service:
+        name: "cron"
+        state: started
+        enabled: true
+
+    - name: Install python prerequisites
+      community.general.zypper:
+        name:
+          - python3-setuptools
+          - python3-pip
+          - python3-pexpect
+          - python3-devel
+          - python3-rpm
+        state: present
+        update_cache: true
+
+
+- name: Configure egeria components
+  hosts: egeria-server
+  become: true
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+  tasks: 
+    - name: Force pull egeria image
+      when: force_pull_images == 'true'
+      community.docker.docker_image:
+        name: "{{ egeria_image }}"
+        force_source: true
+        source: pull
+
+    - name: Egeria container
+      community.docker.docker_container:
+        name: egeria
+        state: started
+        restart_policy: unless-stopped
+        recreate: "{{ recreate_egeria_container == 'true' }}"
+        image: "{{ egeria_image }}"
+        pull: true
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+        ports:
+          - "{{ egeria_listen_port }}:4040"
+        env:
+          GITHUB_APP_PRIVATE_KEY: "{{ github_app_private_key }}"
+          GITHUB_APP_ID: "{{ github_app_id }}"
+          GITHUB_INSTALLATION_ID: "{{ github_installation_id }}"
+
+    - name: Configure egeria vhost
+      ansible.builtin.template:
+        src: "egeria.conf.j2"
+        dest: "{{ proxy_nginx_conf_base_dir }}/{{ proxy_nginx_vhost_dir }}/{{ proxy_nginx_vhost_filename }}.conf"
+        owner: "{{ proxy_nginx_user }}"
+        group: "{{ proxy_nginx_group }}"
+        mode: "0644"
+      vars:
+        server_name: "{{ egeria_server_name }}"
+        egeria_port: "{{ egeria_listen_port }}"
+        http_listen_port: "{{ proxy_nginx_vhost_http_listen_port }}"
+        https_listen_port: "{{ proxy_nginx_vhost_https_listen_port }}"
+        egeria_upstream: "{{ proxy_egeria_upstream_name }}"
+        ssl_certificate: "{{ proxy_ssl_certificate_path }}"
+        ssl_certificate_key: "{{ proxy_ssl_certificate_key_path }}"
+      notify:
+        - Restart nginx
+  roles:
+    - role: geerlingguy.certbot
+      become: true
+      when: enable_certbot_certificate_provisioning == 'true'
+      vars:
+        certbot_create_if_missing: "yes"
+        certbot_create_extra_args: ""
+        certbot_admin_email: trento-project@suse.com
+        certbot_certs:
+          - domains:
+              - "{{ egeria_server_name }}"
