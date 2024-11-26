@@ -36,8 +36,14 @@ func main() {
 	appCtx := context.Background()
 
 	privateKey := []byte(mustHaveEnv("GITHUB_APP_PRIVATE_KEY"))
-	appID, _ := strconv.ParseInt(mustHaveEnv("GITHUB_APP_ID"), 10, 64)
-	installationID, _ := strconv.ParseInt(mustHaveEnv("GITHUB_INSTALLATION_ID"), 10, 64)
+	appID, err := strconv.ParseInt(mustHaveEnv("GITHUB_APP_ID"), 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	installationID, err := strconv.ParseInt(mustHaveEnv("GITHUB_INSTALLATION_ID"), 10, 64)
+	if err != nil {
+		panic(err)
+	}
 
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
