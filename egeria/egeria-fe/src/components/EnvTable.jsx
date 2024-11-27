@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import Pill from "./Pill";
 
-
 function EnvEntry({ environment }) {
   let [, prNumber] = environment.revision.pr.split("pr-");
   if (!prNumber) {
