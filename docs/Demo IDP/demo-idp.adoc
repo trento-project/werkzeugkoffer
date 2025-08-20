@@ -1,6 +1,6 @@
 = demo-idp Playbook - Provision a Keycloak IDP 🔐
 
-NOTE: This content was moved from the demo-idp directory to the docs section. Original source: link:https://github.com/trento-project/werkzeugkoffer/tree/main/demo-idp
+NOTE: This content was moved from the demo-idp directory to the docs section. Original source: link:https://github.com/trento-project/werkzeugkoffer/tree/main/demo-idp[demo-idp directory]
 
 This playbook deploys a `+keycloak+` identity provider on a
 `+Opensuse Leap 15+` machine.

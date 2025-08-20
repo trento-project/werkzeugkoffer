@@ -6,7 +6,7 @@ tools/scripts for the trento project.
 == What’s inside the toolbox?
 
 * /demo-idp - Ansible playbook to deploy a production instance of
-keycloak, used by link:https://demoidp.trento.suse.com
+keycloak, used by link:https://demoidp.trento.suse.com[https://demoidp.trento.suse.com]
 * /egeria - The trento PR environments dashboard, source code and
 ansible playbook
 
