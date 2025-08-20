@@ -16,11 +16,11 @@ access only the `+keycloak+` instance.
 
 == Moving parts
 
-* https://www.keycloak.org/[keycloak]
-* https://www.postgresql.org/[postgresql]
-* https://get.opensuse.org/leap[openSuse Leap]
-* https://www.docker.com/get-started[docker]
-* https://nginx.org/[nginx]
+* link:https://www.keycloak.org/[keycloak]
+* link:https://www.postgresql.org/[postgresql]
+* link:https://get.opensuse.org/leap[openSuse Leap]
+* link:https://www.docker.com/get-started[docker]
+* link:https://nginx.org/[nginx]
 
 == Installation
 
