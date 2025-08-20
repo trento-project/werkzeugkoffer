@@ -1,4 +1,4 @@
-= werkzeugkoffer - Trento infrastructure & development tools
+= Trento werkzeugkoffer
 
 This repository contains the infrastructure code and development
 tools/scripts for the trento project.
