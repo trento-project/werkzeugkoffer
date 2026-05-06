@@ -1,3 +1,8 @@
+<!--
+  ~ SPDX-FileCopyrightText: SUSE LLC
+  ~ SPDX-License-Identifier: Apache-2.0
+-->
+
 module github.com/trento-project/werkzeugoffer/egeria
 
 go 1.23.3

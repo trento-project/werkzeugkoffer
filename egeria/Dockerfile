@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 FROM opensuse/tumbleweed AS binary-build
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en

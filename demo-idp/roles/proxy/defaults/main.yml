@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 proxy_install_nginx: "true"
 proxy_override_nginx_default_conf: "true"
