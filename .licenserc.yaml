@@ -12,13 +12,10 @@ header:
       SPDX-License-Identifier: Apache-2.0
   paths-ignore:
     - "**/*.adoc"
-    - "**/*.example"
     - "**/*.json"
     - "**/*.md"
-    - "**/*.pem"
     - "**/*.service"
     - "**/*.svg"
-    - "**/*.txt"
     - "**/*_service"
     - ".ansible-lint"
     - ".github/CODEOWNERS"
@@ -26,7 +23,6 @@ header:
     - ".tool-versions"
     - ".yamllint"
     - "LICENSE"
-    - "VERSION"
     - "egeria/go.sum"
 
   language:
