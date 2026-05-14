@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+header:
+  comment: on-failure
+  license:
+    spdx-id: Apache-2.0
+    copyright-owner: SUSE LLC
+    software-name: trento-werkzeugkoffer
+    content: |
+      SPDX-FileCopyrightText: SUSE LLC
+      SPDX-License-Identifier: Apache-2.0
+  paths-ignore:
+    - "**/*.adoc"
+    - "**/*.json"
+    - "**/*.md"
+    - "**/*.service"
+    - "**/*.svg"
+    - "**/*_service"
+    - ".ansible-lint"
+    - ".github/CODEOWNERS"
+    - ".github/dependabot.yml"
+    - ".tool-versions"
+    - ".yamllint"
+    - "LICENSE"
+    - "egeria/go.sum"
+
+  language:
+    JavaScript:
+      extensions:
+        - ".js"
+        - ".jsx"
+        - ".mjs"
+        - ".cjs"
+      comment_style_id: DoubleSlash

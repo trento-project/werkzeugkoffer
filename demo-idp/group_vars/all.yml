@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 postgres_keycloak_db: keycloak
 postgres_keycloak_user: keycloak
