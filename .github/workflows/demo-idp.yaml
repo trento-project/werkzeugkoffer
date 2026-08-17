@@ -92,7 +92,7 @@ jobs:
       - name: Compress tarball
         run: |
           tar -zcf werkzeugkoffer-demo-idp.tgz demo-idp/roles/ demo-idp/playbook.yml demo-idp/playbook.cleanup.yml demo-idp/requirements.yml demo-idp/README.md
-      - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: werkzeugkoffer-demo-idp
           path: |
