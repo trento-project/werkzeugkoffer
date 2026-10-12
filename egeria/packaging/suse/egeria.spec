@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 #
 # spec file for package trento
@@ -23,7 +23,7 @@ Name:           egeria
 # Version will be processed via set_version source service
 Version:        0
 Release:        0
-License:        Apache-2.0
+License:        GPL-3.0-or-later
 Summary:        Trento PR environments dashboard
 URL:            https://github.com/trento-project/werkzeugkoffer/egeria
 Source:         %{name}-%{version}.tar.gz
