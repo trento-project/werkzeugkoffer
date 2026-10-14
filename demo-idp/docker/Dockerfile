@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 FROM opensuse/leap:15
 LABEL org.opencontainers.image.source="https://github.com/trento-project/werkzeugkoffer"
