@@ -32,7 +32,7 @@ jobs:
         run: ansible-galaxy install -r demo-idp/requirements.yml
 
       - name: Run ansible-lint
-        uses: ansible/ansible-lint@e7f397ad6dfa20d274afa17cd7bbedd84ed136f5 # v26.9.0
+        uses: ansible/ansible-lint@fac2489f3e4ccffa83a40b839770abbf4ab52327 # v26.10.0
 
   build-and-push-container-images-demo-idp:
     name: Build and push container images for demo-idp playbook
